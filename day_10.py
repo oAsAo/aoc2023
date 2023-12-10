@@ -262,7 +262,7 @@ def solve(input_, flags):
 	# If solving Part I.
 	if not flags['fix']:
 		# You get to the most distant point of a loop if you follow it for half of its length.
-		max_distance = (len(main_loop) + 1) // 2
+		max_distance = len(main_loop) // 2
 		return max_distance
 	# If solving Part II.
 	else:
