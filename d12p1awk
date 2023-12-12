@@ -1,0 +1,66 @@
+function itr(l, ptrn) {
+	len = length(l)
+	for (i=1;i<=len;i++) {
+		if (substr(l, i, 1) == "?") {
+			j++
+			qmarks[j] = i
+		}
+	}
+	stack[1] = 1
+	stack[2] = "#"
+	stack[3] = 1
+	stack[4] = "."
+	sp = 4
+	while (sp > 0) {
+		i = stack[sp-1]
+		k = qmarks[i]
+		l = substr(l, 1, k-1) stack[sp] substr(l, k+1)
+		delete stack[sp]
+		delete stack[sp-1]
+		sp -= 2
+		if (i == j) {
+			sQ = l
+			pQ = ptrn
+			sQ = sQ "."
+			checkQ = 1
+			split(pQ, parrQ, ",")
+			for (iQ in parrQ) {
+				parrQ[iQ] = strtonum(parrQ[iQ])
+			}
+			split(sQ, sarrQ, "")
+			cntQ = 0
+			jQ = 1
+			for (iQ in sarrQ) {
+				charQ = sarrQ[iQ]
+				if (charQ == ".") {
+					if (cntQ > 0) {
+						if (cntQ < parrQ[jQ]) {
+							checkQ = 0
+							break
+						}
+						jQ++
+					}
+					cntQ = 0
+				}
+				else {
+					cntQ++
+					if (cntQ > parrQ[jQ]) {
+						checkQ = 0
+						break
+					}
+				}
+			}
+			sum = sum + checkQ
+		}
+		else {
+			stack[sp+1] = i+1
+			stack[sp+2] = "#"
+			stack[sp+3] = i+1
+			stack[sp+4] = "."
+			sp += 4
+		}
+	}
+	return sum
+}
+{SUM += itr($1, $2)}
+END {print SUM}
