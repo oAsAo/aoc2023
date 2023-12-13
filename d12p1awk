@@ -1,66 +1,36 @@
-function itr(l, ptrn) {
-	len = length(l)
-	for (i=1;i<=len;i++) {
-		if (substr(l, i, 1) == "?") {
-			j++
-			qmarks[j] = i
+{
+	split($1"?"$1"?"$1"?"$1"?"$1, chars, "")
+	nums_len = split($2","$2","$2","$2","$2, nums, ",")
+	for (j = nums_len; j >= 1; j--) {
+		for (k = nums[j]; k >= -1; k--) {
+			states[j" "k] = 0
 		}
 	}
-	stack[1] = 1
-	stack[2] = "#"
-	stack[3] = 1
-	stack[4] = "."
-	sp = 4
-	while (sp > 0) {
-		i = stack[sp-1]
-		k = qmarks[i]
-		l = substr(l, 1, k-1) stack[sp] substr(l, k+1)
-		delete stack[sp]
-		delete stack[sp-1]
-		sp -= 2
-		if (i == j) {
-			sQ = l
-			pQ = ptrn
-			sQ = sQ "."
-			checkQ = 1
-			split(pQ, parrQ, ",")
-			for (iQ in parrQ) {
-				parrQ[iQ] = strtonum(parrQ[iQ])
-			}
-			split(sQ, sarrQ, "")
-			cntQ = 0
-			jQ = 1
-			for (iQ in sarrQ) {
-				charQ = sarrQ[iQ]
-				if (charQ == ".") {
-					if (cntQ > 0) {
-						if (cntQ < parrQ[jQ]) {
-							checkQ = 0
-							break
-						}
-						jQ++
-					}
-					cntQ = 0
+	states["1 0"] = 1
+	states[(nums_len+1)" 0"] = 0
+	
+	for (i in chars) {
+		if (chars[i] == "#") {
+			states[(nums_len+1)" 0"] = 0
+		}
+		for (j = nums_len; j >= 1; j--) {
+			first = states[j" "0]
+			last = states[j" "nums[j]]
+			for (k = nums[j]; k >= 0; k--) {
+				if (chars[i] == ".") {
+					states[j" "k] = 0
 				}
 				else {
-					cntQ++
-					if (cntQ > parrQ[jQ]) {
-						checkQ = 0
-						break
-					}
+					states[j" "k] = states[j" "(k-1)]
 				}
 			}
-			sum = sum + checkQ
-		}
-		else {
-			stack[sp+1] = i+1
-			stack[sp+2] = "#"
-			stack[sp+3] = i+1
-			stack[sp+4] = "."
-			sp += 4
+			if (chars[i] != "#") {
+				states[j" 0"] += first
+				states[(j+1)" 0"] += last
+			}
 		}
 	}
-	return sum
+	sum += states[nums_len" "nums[nums_len]] + states[(nums_len+1)" 0"]
 }
-{SUM += itr($1, $2)}
-END {print SUM}
+
+END {print sum}
